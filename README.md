@@ -47,6 +47,7 @@ https://github.com/aegean-org/ne-mcp/releases/latest
     }
   }
 }
+```
 
 #### 使用示例
 
