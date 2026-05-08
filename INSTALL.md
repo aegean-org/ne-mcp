@@ -5,7 +5,7 @@
 启动命令必须最终为：
 
 ```bash
-C:\\absolute\\path\\to\\ne-mcp.exe
+C:\\absolute\\path\\to\\ne-mcp-xxx.exe
 ```
 
 ---
@@ -43,7 +43,9 @@ https://github.com/aegean-org/ne-mcp/releases/latest/download/<asset>
 
 ## MCP 配置输出
 
-如果目标 CLI 支持直接添加 stdio MCP server：
+如果使用本地二进制，改为：
+
+- /absolute/path/to/ne-mcp 为解压后的文件地址
 
 ```json
 {
@@ -55,4 +57,4 @@ https://github.com/aegean-org/ne-mcp/releases/latest/download/<asset>
 }
 ```
 
-Windows 本地二进制时，`command` 改为 `C:\\absolute\\path\\to\\ne-mcp.exe`。
+Windows 本地二进制时，`command` 改为 Windows路径
