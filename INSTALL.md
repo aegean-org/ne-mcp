@@ -41,10 +41,6 @@ https://github.com/aegean-org/ne-mcp/releases/latest/download/<asset>
 
 - Windows: `%USERPROFILE%\\AppData\\Local\\ne-mcp\\`
 
-解压后的目标文件名必须为：
-
-- Windows: `ne-mcp.exe`
-
 ## MCP 配置输出
 
 如果目标 CLI 支持直接添加 stdio MCP server：
