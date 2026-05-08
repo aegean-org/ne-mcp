@@ -1,42 +1,82 @@
 # NoteExpress MCP（ne-mcp-server）安装说明
+# NoteExpress MCP CLI 安装说明
 
-本文件说明如何在 **Windows** 上安装并对接支持 MCP 的客户端（如 Claude Code、Cursor 等），使 AI 能通过 MCP 协议只读访问本机 **NoteExpress** 文献库（`.ndb`）。
+## 目标
 
----
+启动命令必须最终为以下两种之一：
 
-## 环境与前置条件
+```bash
+npx -y @aegean-org/ne-mcp
+```
 
-| 项目 | 说明 |
-|------|------|
-| 操作系统 | **Windows 64 位（x64）**；NoteExpress 与本服务均面向 Windows |
-| NoteExpress | 建议已安装并至少打开过一次文献库，便于自动发现库路径 |
-| 可选：Node.js | 若使用 **npm / npx** 方式安装运行，需已安装 Node.js（自带 `npx`） |
+或本地二进制：
 
----
-
-## 安装方式概览
-
-推荐顺序：
-
-1. 若已安装 **Node.js**，优先使用官方 npm 包 **`@aegean-org/ne-mcp`**，由 `npx` 自动拉取 Windows 平台二进制。
-2. 若 **未安装 Node.js**（或无法使用 npm）：打开 **[GitHub Releases 最新版](https://github.com/aegean-org/ne-mcp/releases/latest)**，下载当前版本提供的 **Windows 安装包（通常为 zip）**，解压后得到 **`ne-mcp-server-amd64.exe`**，在 MCP 配置里填写该文件的**绝对路径**（见下文「方式二」）。
+```bash
+C:\\absolute\\path\\to\\ne-mcp.exe
+```
 
 ---
 
-## 方式一：通过 npm（推荐）
+## 决策逻辑
 
-包名：**`@aegean-org/ne-mcp`**（发布于 **https://registry.npmjs.org**）。
+1. 先判断当前操作系统和 CPU 架构，是否为Windows 64 位（x64）。
+2. 再检查 `node` 与 `npx` 是否已安装且可执行。
+3. 如果 `node` 和 `npx` 可用，优先使用 npm 包启动，不下载 GitHub release。
+4. 如果 `node` 或 `npx` 不可用，则从 GitHub Releases 下载对应平台压缩包，解压后直接运行本地二进制。
 
-无需全局安装；首次由 MCP 客户端或终端拉起时，会从 npm 拉取 **可选依赖** `@aegean-org/ne-mcp-win32-x64`，其中包含与本机架构匹配的 `ne-mcp-server-amd64.exe`。
+## 平台判断
+- Windows x64: `win32-x64`
+---
 
-日常使用 **无需填写任何启动参数**；默认会自动尝试发现 NoteExpress 最近使用的文献库。
+## Node.js 可用时
 
-### MCP 配置示例（npx）
+直接使用：
+
+```bash
+npx -y @aegean-org/ne-mcp
+```
+
+不要额外安装全局包，也不要改写参数顺序。
+
+## Node.js 不可用时
+
+GitHub Releases 页面：
+
+```text
+https://github.com/aegean-org/ne-mcp/releases/latest
+```
+
+直接下载地址模板：
+
+```text
+https://github.com/aegean-org/ne-mcp/releases/latest/download/<asset>
+```
+
+资产映射：
+
+- `win32-x64` -> `ne-mcp-windows-amd64.7z`
+
+将压缩包解压到用户可写目录，例如：
+
+- Windows: `%USERPROFILE%\\AppData\\Local\\ne-mcp\\`
+
+解压后的目标文件名必须为：
+
+- Windows: `ne-mcp.exe`
+
+## MCP 配置输出
+
+如果目标 CLI 支持直接添加 stdio MCP server：
+
+- 有 Node.js 时，command 使用 `npx`，args 使用 `["-y", "@aegean-org/ne-mcp"]`
+- 无 Node.js 时，command 使用本地二进制绝对路径
+
+如果目标 CLI 需要 JSON 配置，输出：
 
 ```json
 {
   "mcpServers": {
-    "ne-mcp-server": {
+    "ne-mcp": {
       "command": "npx",
       "args": ["-y", "@aegean-org/ne-mcp"]
     }
@@ -44,32 +84,16 @@
 }
 ```
 
----
-
-## 方式二：GitHub Releases 安装包（无 Node.js 时）
-
-当本机 **没有 Node.js** 或不便使用 **npm / npx** 时，请从官方发布页下载 Windows 包：
-
-**[https://github.com/aegean-org/ne-mcp/releases/latest](https://github.com/aegean-org/ne-mcp/releases/latest)**
-
-在 **Assets** 中选择适用于 Windows 的压缩包（如 `*.zip`），下载后解压，其中应包含：
-
-**`ne-mcp-server-amd64.exe`**
-
-将该文件放到固定目录（例如 `%USERPROFILE%\AppData\Local\ne-mcp-server\ne-mcp-server-amd64.exe`），随后在 MCP 配置中指向该路径即可。
-
-### MCP 配置示例（本地 exe）
+如果使用本地二进制，改为：
 
 ```json
 {
   "mcpServers": {
-    "ne-mcp-server": {
-      "command": "C:\\Users\\你的用户名\\AppData\\Local\\ne-mcp-server\\ne-mcp-server-amd64.exe"
+    "ne-mcp": {
+      "command": "/absolute/path/to/ne-mcp",
     }
   }
 }
 ```
 
-路径请改为本机实际绝对路径，Windows 下建议使用**双反斜杠** `\\` 或按客户端要求的 JSON 转义规则书写。
-
----
+Windows 本地二进制时，`command` 改为 `C:\\absolute\\path\\to\\ne-mcp.exe`。
