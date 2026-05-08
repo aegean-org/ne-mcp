@@ -1,4 +1,3 @@
-# NoteExpress MCP（ne-mcp-server）安装说明
 # NoteExpress MCP CLI 安装说明
 
 ## 目标
